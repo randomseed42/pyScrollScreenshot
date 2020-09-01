@@ -3,9 +3,9 @@ import cv2
 import numpy as np
 
 
-def pyConcat(img_folder='./img', output_file='full_screenshot.png'):
+def pyConcat(img_folder='./img', border={'top':7, 'bottom':2, 'left':0, 'right':17}, output_file='full_screenshot.png'):
     img_list = os.listdir(img_folder)
-    imgs = [cv2.imread(os.path.join(img_folder, fname)) for fname in img_list]
+    imgs = [cv2.imread(os.path.join(img_folder, fname))[border['top']:-border['bottom'], border['left']:-border['right'], :] for fname in img_list]
     cut_imgs = []
     for i in range(len(img_list)-1):
         tail_cuts = []
@@ -18,4 +18,4 @@ def pyConcat(img_folder='./img', output_file='full_screenshot.png'):
         cut_imgs.append(top_img[:-max(tail_cuts), :, :])
         print(f'image {i} cut last {max(tail_cuts)} lines')
     cut_imgs.append(imgs[-1])
-    cv2.imwrite(output_file, np.concatenate(full, axis=0))
+    cv2.imwrite(output_file, np.concatenate(cut_imgs, axis=0))
